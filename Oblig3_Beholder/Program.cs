@@ -49,13 +49,17 @@ namespace Oblig3_Beholder
         public int Stoerrelse()
         {
             Node _node = _head;
-            int i = 0;
+            int i = 1;
+            if(_node == null)
+			{
+                return 0;
+			}
 			while (_node.next != null)
 			{
                 _node = _node.next;
 				i++;
 			}
-            return i+1;
+            return i;
         }
         public void LeggTil(T x)
         {
@@ -86,38 +90,50 @@ namespace Oblig3_Beholder
         
         public void LeggTil(int pos, T x)
         {
-            Node before = null;
+            if(pos > Stoerrelse() || pos < 0)
+			{
+                throw new UgyldigListeIndeks(pos);
+            }
+
             Node _node = _head;
 
-            if (pos == 0)
+            if (_node == null)
             {
-                Node tmp = _head;
                 _head = new Node(x);
-                _head.next = tmp;
+            }
+
+            else if (pos == 0)
+            {
+                Node next = _head;
+                _head = new Node(x);
+                _head.next = next;
             }
             else
             {
+                Node before=null;
                 for (int i = 0; i < pos; i++)
                 {
-                    if (_node.next == null)
-                        throw new UgyldigListeIndeks(pos);
-
                     before = _node;
                     _node = _node.next;
                 }
-                before.next = new Node(x);
-                before.next.next = _node;
-
+                Node after = _node;
+                _node = new Node(x);
+                before.next = _node;
+                _node.next = after;
+                
             }
         }
 
         public void Sett(int pos, T x)
         {
+            if (pos > Stoerrelse()-1 || pos < 0)
+            {
+                throw new UgyldigListeIndeks(pos);
+            }
+
             Node _node = _head;
             for (int i = 0; i < pos; i++)
             {
-                if (_node.next == null)
-                    throw new UgyldigListeIndeks(pos);
                 _node = _node.next;
             }
             _node.data = x;
@@ -125,31 +141,56 @@ namespace Oblig3_Beholder
         
         public T Hent(int pos)
         {
-            Node _node = _head;
-			for (int i = 0; i < pos; i++)
-			{
-                if (_node.next == null)
-                    throw new UgyldigListeIndeks(pos);
-
-                _node = _node.next;
-			}
+            if (pos > Stoerrelse()-1 || pos < 0)
+            {
+                throw new UgyldigListeIndeks(pos);
+            }
+            if (pos == 0)
+            {
+                return _head.data;
+            }
+            else
+            {
+                Node _node = _head;
+                for (int i = 0; i < pos; i++)
+                {
+                    _node = _node.next;
+                }
             return _node.data;
+            }
         }
        
         public T Fjern(int pos) 
         {
 			Node _node = _head;
-            //Node _this = null;
+			Node _prev = null;
 
-            for (int i = 0; i < pos; i++)
-            {
-                if (_node.next == null)
-                    throw new UgyldigListeIndeks(pos);
-                //_this = _node;
-                _node = _node.next;
+            if(_head == null)
+			{
+                throw new UgyldigListeIndeks(pos);
             }
-            var data = _node.data;
-            _node = _node.next;
+            if (pos == 0)
+            {
+                _head = _head.next;
+                return _node.data;
+            }
+            else
+            {
+                if (pos > Stoerrelse() - 1 || pos < 0)
+                {
+                    throw new UgyldigListeIndeks(pos);
+                }
+                for (int i = 0; i < pos; i++)
+                {
+                    _prev = _node;
+                    _node = _node.next;
+                }
+            }
+            Node _this = _node;
+            Node _next = _this.next;
+
+            var data = _this.data;
+            _prev.next = _next;
             return data;
         }
     }
@@ -189,49 +230,27 @@ namespace Oblig3_Beholder
             throw new NotSupportedException();
         }
     }*/
+
     class Program
     {
         static void Main(string[] args)
         {
-            /*
-            //Console.WriteLine("Hello World!");
-            Narkotisk narko = new Narkotisk("Heftig Narkotika", 43.2, 2.4, 2);
-            Vanedannende maaHaDet = new Vanedannende("Må Ha Det!!", 12.3, 1.4, 9);
-            Vanlig kjedlig = new Vanlig("Boooring", 200, 0);
+            //Liste.Stoerrelse();
+            Liste<String> Liste = new Lenkeliste<String>();
+            Liste.LeggTil("Element 0");
+            Liste.LeggTil("Element 1");
+            Liste.LeggTil("Element 2");
+            Liste.LeggTil("Element 3");
+            Liste.LeggTil("Element 4");
+            Liste.Sett(0, "nyVerdi 0");
+            Liste.Sett(2, "nyVerdi 2");
 
-            Militaer r1 = new Militaer(narko, new Lege("Fres"), 243, 0);
-            PResept r2 = new PResept(narko, new Spesialist("Moter", 45323), 243, 2);
-            Blaa b1 = new Blaa(maaHaDet, new Spesialist("Fredd", 194), 2343, 2);
-            */
-            Liste<int> liste = new Lenkeliste<int>();
-
-            liste.LeggTil(3);
-            liste.LeggTil(5);
-            liste.LeggTil(8);
-            //liste.LeggTil(0, 6);
-            //liste.Sett(0, 9);
-
-            //Console.WriteLine("Hent 0: " + liste.Hent(0));
-            //Console.WriteLine("Hent 3: " + liste.Hent(3));
-
-            //Console.WriteLine("Stoerelse: " + liste.Stoerrelse());
-
-			Console.WriteLine(liste.Fjern(2));
-			Console.WriteLine(liste.Fjern());
-            Console.WriteLine(liste.Fjern());
-            Console.WriteLine(liste.Fjern());
-
-
-
-            //Console.WriteLine(liste.Fjern());
-
-
-            //Console.WriteLine(liste.Fjern());
-
-
-            //liste.Fjern();
-
-
+			for (int i = 0; i < Liste.Stoerrelse(); i++)
+			{
+				Console.WriteLine(Liste.Hent(i));
+			}
+			Console.WriteLine("Fjern 3");
+			Console.WriteLine(Liste.Fjern(3));
 
         }
     }
