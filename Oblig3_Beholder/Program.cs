@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Oblig2_LegeMiddel;
+//using Oblig2_LegeMiddel;
 using Oblig3_Beholder;
 
 namespace Oblig3_Beholder
@@ -21,18 +21,18 @@ namespace Oblig3_Beholder
     }*/
     public interface Liste<T> 
     {
-        //public int Stoerrelse();
-        public void LeggTil(int pos, T x);
+		public int Stoerrelse();
+		public void LeggTil(int pos, T x);
         public void LeggTil(T x);
         public void Sett(int pos, T x);
-        //public T Hent(int pos);
-        //public T Fjern(int pos);
-        public T Fjern();
+		public T Hent(int pos);
+		public T Fjern(int pos);
+		public T Fjern();
     }
     public class Lenkeliste<T> : Liste<T>
     {
         private Node _head;
-        private Node _node;
+        //private Node _node;
 
         public class Node
         {
@@ -45,39 +45,49 @@ namespace Oblig3_Beholder
             }
         }
 
-        /*
+        
         public int Stoerrelse()
         {
-            return this.Count;
-        }*/
+            Node _node = _head;
+            int i = 0;
+			while (_node.next != null)
+			{
+                _node = _node.next;
+				i++;
+			}
+            return i+1;
+        }
         public void LeggTil(T x)
         {
-            Node first = _head;
-            if (_head == null)
+            Node _node = _head;
+
+            if (_node == null)
                 _head = new Node(x);
             else
             {
-                while (_head.next != null)
+                while (_node.next != null)
                 {
-                    _head = _head.next;
+                    _node = _node.next;
                 }
-                _head.next = new Node(x);
-                _head = first;
+                _node.next = new Node(x);
+                //_head = first;
             }
         }
         public T Fjern()
         {
-            if (_head == null)
+            Node _node = _head;
+
+            if (_node == null)
                 throw new UgyldigListeIndeks(-1);
-            Node tmp = _head;
-            _head = _head.next;
+            Node tmp = _node;
+            _head = _node.next;
             return tmp.data;
         }
         
         public void LeggTil(int pos, T x)
         {
             Node before = null;
-            Node first = _head;
+            Node _node = _head;
 
             if (pos == 0)
             {
@@ -89,43 +99,61 @@ namespace Oblig3_Beholder
             {
                 for (int i = 0; i < pos; i++)
                 {
-                    if (_head.next == null)
+                    if (_node.next == null)
                         throw new UgyldigListeIndeks(pos);
 
-                    before = _head;
-                    _head = _head.next;
+                    before = _node;
+                    _node = _node.next;
                 }
                 before.next = new Node(x);
-                before.next.next = _head;
-                _head = first;
+                before.next.next = _node;
+
             }
         }
 
         public void Sett(int pos, T x)
         {
+            Node _node = _head;
             for (int i = 0; i < pos; i++)
             {
-                if (_head.next == null)
+                if (_node.next == null)
                     throw new UgyldigListeIndeks(pos);
-                _head = _head.next;
+                _node = _node.next;
             }
-            _head = new Node(x);
-        }
-        /*
-        public T Hent(int pos)
-        {
-            
+            _node.data = x;
         }
         
+        public T Hent(int pos)
+        {
+            Node _node = _head;
+			for (int i = 0; i < pos; i++)
+			{
+                if (_node.next == null)
+                    throw new UgyldigListeIndeks(pos);
+
+                _node = _node.next;
+			}
+            return _node.data;
+        }
+       
         public T Fjern(int pos) 
         {
-            if (this.Count - 1 < pos || pos < 0){ throw new UgyldigListeIndeks(pos); }
+			Node _node = _head;
+            //Node _this = null;
 
-            T value = this[pos];
-            this.RemoveAt(pos);        
-            return value; 
+            for (int i = 0; i < pos; i++)
+            {
+                if (_node.next == null)
+                    throw new UgyldigListeIndeks(pos);
+                //_this = _node;
+                _node = _node.next;
+            }
+            var data = _node.data;
+            _node = _node.next;
+            return data;
         }
     }
+    /*
     public class Stabel<T>: Lenkeliste<T>
     {
         public void LeggPaa(T x)
@@ -159,8 +187,8 @@ namespace Oblig3_Beholder
         public new Exception LeggTil(int pos, T x)
         {
             throw new NotSupportedException();
-        }*/
-    }
+        }
+    }*/
     class Program
     {
         static void Main(string[] args)
@@ -180,13 +208,22 @@ namespace Oblig3_Beholder
             liste.LeggTil(3);
             liste.LeggTil(5);
             liste.LeggTil(8);
+            //liste.LeggTil(0, 6);
+            //liste.Sett(0, 9);
 
-            liste.LeggTil(2, 6);
+            //Console.WriteLine("Hent 0: " + liste.Hent(0));
+            //Console.WriteLine("Hent 3: " + liste.Hent(3));
 
+            //Console.WriteLine("Stoerelse: " + liste.Stoerrelse());
+
+			Console.WriteLine(liste.Fjern(2));
+			Console.WriteLine(liste.Fjern());
             Console.WriteLine(liste.Fjern());
             Console.WriteLine(liste.Fjern());
-            Console.WriteLine(liste.Fjern());
-            Console.WriteLine(liste.Fjern());
+
+
+
+            //Console.WriteLine(liste.Fjern());
 
 
             //Console.WriteLine(liste.Fjern());
